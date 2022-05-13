@@ -2,10 +2,10 @@
 #include <chrono>
 #include <iostream>
 #include <random>
+#include <cctype>
 #include "WordsDB/words.cpp"
 
 #define Table std::vector<std::vector<Cell>>
-
 int HEIGHT = 90, WIDTH = 90;
 sf::Font font;
 int attempt = 0;
@@ -43,7 +43,7 @@ auto drawCells(const Table &table, sf::RenderWindow &window) -> void {
 auto initializeCells() -> void {
     for (int i = 0; i < 6; ++i) {
         for (int j = 0; j < 5; ++j) {
-            Cell& curr = cells[i][j];
+            Cell &curr = cells[i][j];
             int rec_x = 70 + (WIDTH + 10) * j;
             int rec_y = 50 + (HEIGHT + 20) * i;
             curr.cell.setSize(sf::Vector2f(WIDTH, HEIGHT));
@@ -62,12 +62,13 @@ auto initializeCells() -> void {
         }
     }
 }
+
 auto getInput(sf::Uint32 letter) -> void {
-    locale locale{""};
-    auto letter_char = static_cast<char> (letter);
+    char letter_char = static_cast<char> (letter);
+    char upper_letter_char = toupper(letter_char);
     auto new_letter = std::string(1, letter_char);
     words[attempt][col] = new_letter;
-    cells[attempt][col].letter.setString(new_letter);
+    cells[attempt][col].letter.setString(std::string(1, upper_letter_char));
 }
 
 int main() {
@@ -80,36 +81,64 @@ int main() {
     right_answer.setPosition(520, 900);
     right_answer.setFillColor(sf::Color::Black);
     right_answer.setCharacterSize(24);
+
     sf::RenderWindow window(sf::VideoMode(640, 960), "Wordle");
+    window.setKeyRepeatEnabled(false);
 
     initializeCells();
 
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-                window.close();
-            else if (event.type == sf::Event::TextEntered) {
-                if (event.text.unicode < 123 && event.text.unicode > 64 && col < 5) {
-                    std::cout << event.text.unicode << " ";
-                    getInput(event.text.unicode);
-                    ++col;
-                }
-                else if (event.text.unicode  == 8 and col > 0) {
-                    std::cout << "del";
-                    words[attempt][col - 1] = "";
-                    cells[attempt][col - 1].letter.setString("");
-                    --col;
-                }
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) {
-                if (!flag) {
-                    right_answer.setFillColor(sf::Color::Green);
-                    flag = true;
-                } else {
-                    right_answer.setFillColor(sf::Color::Black);
-                    flag = false;
-                }
+            switch (event.type) {
+                case sf::Event::Closed:
+                    window.close();
+                    break;
+
+                case sf::Event::KeyPressed:
+                    switch (event.key.code) {
+                        case sf::Keyboard::Escape:
+                            window.close();
+                            break;
+
+                        case sf::Keyboard::Tab:
+                            if (!flag) {
+                                right_answer.setFillColor(sf::Color::Green);
+                                flag = true;
+                            } else {
+                                right_answer.setFillColor(sf::Color::Black);
+                                flag = false;
+                            }
+                            break;
+
+                        case sf::Keyboard::Enter:
+                            if (col == 5) {
+                                std::string new_word = "";
+                                for (auto l: words[attempt]) {
+                                    new_word += l;
+                                }
+                                if (new_word == word) {
+                                    window.close();
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                case sf::Event::TextEntered:
+                    if (event.text.unicode < 123 && event.text.unicode > 64 && col < 5) {
+                        std::cout << event.text.unicode << " ";
+                        getInput(event.text.unicode);
+                        ++col;
+                    } else if (event.text.unicode == 8 && col > 0) {
+                        std::cout << "del ";
+                        words[attempt][col - 1] = "";
+                        cells[attempt][col - 1].letter.setString("");
+                        --col;
+                    }
+                default:
+                    break;
             }
         }
         window.clear();
