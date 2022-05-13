@@ -1,7 +1,6 @@
 #include <string>
 #include <set>
-
-using namespace std;
+using namespace std::literals;
 std::set<std::string> wordlist = {
         "aback"s, "abase"s, "abate"s, "abbey"s, "abbot"s, "abhor"s, "abide"s, "abled"s, "abode"s,
         "abort"s, "about"s, "above"s, "abuse"s, "abyss"s, "acorn"s, "acrid"s, "actor"s, "acute"s,

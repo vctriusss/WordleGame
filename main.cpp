@@ -3,13 +3,16 @@
 #include <iostream>
 #include <random>
 #include <cctype>
-#include "WordsDB/words.cpp"
+#include "Wordlist/wordlist.cpp"
 
 #define Table std::vector<std::vector<Cell>>
+
 int HEIGHT = 90, WIDTH = 90;
 sf::Font font;
 int attempt = 0;
 int col = 0;
+bool show_correct = false;
+
 
 struct Cell {
     sf::RectangleShape cell;
@@ -18,9 +21,9 @@ struct Cell {
     int lx;
     int ly;
 };
+
 std::vector<std::vector<std::string>> words(6, std::vector<std::string>(5, std::string()));
 Table cells(6, std::vector<Cell>(5, Cell()));
-
 
 auto createWord() -> std::string {
     std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
@@ -30,7 +33,6 @@ auto createWord() -> std::string {
     return *it;
 }
 
-
 auto drawCells(const Table &table, sf::RenderWindow &window) -> void {
     for (const auto &v: table) {
         for (const auto &c: v) {
@@ -38,6 +40,13 @@ auto drawCells(const Table &table, sf::RenderWindow &window) -> void {
             window.draw(c.letter);
         }
     }
+}
+
+auto createText(std::string string, int size, sf::Color color, int x, int y) -> sf::Text {
+    auto text = sf::Text(string, font, size);
+    text.setPosition(sf::Vector2f(x, y));
+    text.setFillColor(color);
+    return text;
 }
 
 auto initializeCells() -> void {
@@ -54,11 +63,7 @@ auto initializeCells() -> void {
             curr.lx = rec_x + WIDTH / 2 - 20;
             curr.ly = rec_y + HEIGHT / 2 - 50;
 
-            curr.letter.setFont(font);
-            curr.letter.setFillColor(sf::Color::White);
-            curr.letter.setString("");
-            curr.letter.setCharacterSize(70);
-            curr.letter.setPosition(sf::Vector2f(curr.lx, curr.ly));
+            curr.letter = createText("", 70, sf::Color::White, curr.lx, curr.ly);
         }
     }
 }
@@ -71,16 +76,24 @@ auto getInput(sf::Uint32 letter) -> void {
     cells[attempt][col].letter.setString(std::string(1, upper_letter_char));
 }
 
+auto colorizeCells(const std::string &new_word, const std::string &correct_word) -> void {
+    for (int j = 0; j < 5; ++j) {
+        char letter = new_word[j];
+        if (correct_word.find(letter) != std::string::npos) {
+            if (correct_word.find(letter) == new_word.find(letter)) {
+                cells[attempt][j].cell.setFillColor(sf::Color(76, 153, 0));
+            } else
+                cells[attempt][j].cell.setFillColor(sf::Color(204, 204, 0));
+            cells[attempt][j].cell.setOutlineThickness(0);
+        }
+    }
+}
+
 int main() {
     auto word = createWord();
     font.loadFromFile("../Fonts/Sono-Medium.ttf");
     sf::Text right_answer;
-    bool flag = false;
-    right_answer.setFont(font);
-    right_answer.setString(word);
-    right_answer.setPosition(520, 900);
-    right_answer.setFillColor(sf::Color::Black);
-    right_answer.setCharacterSize(24);
+    right_answer = createText(word, 24, sf::Color::Black, 520, 900);
 
     sf::RenderWindow window(sf::VideoMode(640, 960), "Wordle");
     window.setKeyRepeatEnabled(false);
@@ -102,26 +115,44 @@ int main() {
                             break;
 
                         case sf::Keyboard::Tab:
-                            if (!flag) {
-                                right_answer.setFillColor(sf::Color::Green);
-                                flag = true;
-                            } else {
-                                right_answer.setFillColor(sf::Color::Black);
-                                flag = false;
-                            }
+                            right_answer.setFillColor(!show_correct ? sf::Color::Green : sf::Color::Black);
+                            show_correct = !show_correct;
                             break;
 
                         case sf::Keyboard::Enter:
                             if (col == 5) {
-                                std::string new_word = "";
+                                std::string entered = "";
                                 for (auto l: words[attempt]) {
-                                    new_word += l;
+                                    entered += l;
                                 }
-                                if (new_word == word) {
+                                if (wordlist.contains(entered)) {
+                                    colorizeCells(entered, word);
+                                    ++attempt;
+                                    col = 0;
+                                    bool correct = (entered == word);
+                                    if (correct) {
+                                        std::cout << "\nYOU WIN";
+                                        window.close();
+                                    }
+                                } else {
+                                    std::cout << "\nNO SUCH WORD!\n";
+                                }
+                                if (attempt == 6) {
+                                    std::cout << "\nYOU LOST!";
                                     window.close();
                                 }
                             }
                             break;
+
+                        case sf::Keyboard::BackSpace:
+                            if (col > 0) {
+                                std::cout << "del ";
+                                words[attempt][col - 1] = "";
+                                cells[attempt][col - 1].letter.setString("");
+                                --col;
+                            }
+                            break;
+
                         default:
                             break;
                     }
@@ -131,12 +162,8 @@ int main() {
                         std::cout << event.text.unicode << " ";
                         getInput(event.text.unicode);
                         ++col;
-                    } else if (event.text.unicode == 8 && col > 0) {
-                        std::cout << "del ";
-                        words[attempt][col - 1] = "";
-                        cells[attempt][col - 1].letter.setString("");
-                        --col;
                     }
+
                 default:
                     break;
             }
