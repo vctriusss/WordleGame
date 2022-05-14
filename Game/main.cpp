@@ -3,7 +3,8 @@
 #include <iostream>
 #include <random>
 #include <cctype>
-#include "Wordlist/wordlist.cpp"
+#include "../Wordlist/wordlist.cpp"
+//#include <spdlog/spdlog.h>
 
 #define Table std::vector<std::vector<Cell>>
 
@@ -24,6 +25,9 @@ struct Cell {
 
 std::vector<std::vector<std::string>> words(6, std::vector<std::string>(5, std::string()));
 Table cells(6, std::vector<Cell>(5, Cell()));
+
+const int COLUMN_NUMBER = 5;
+const int WORDS_NUMBER = 6;
 
 auto createWord() -> std::string {
     std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
@@ -50,8 +54,8 @@ auto createText(std::string string, int size, sf::Color color, int x, int y) -> 
 }
 
 auto initializeCells() -> void {
-    for (int i = 0; i < 6; ++i) {
-        for (int j = 0; j < 5; ++j) {
+    for (int i = 0; i < WORDS_NUMBER; ++i) {
+        for (int j = 0; j < COLUMN_NUMBER; ++j) {
             Cell &curr = cells[i][j];
             int rec_x = 70 + (WIDTH + 10) * j;
             int rec_y = 50 + (HEIGHT + 20) * i;
@@ -108,7 +112,7 @@ int main() {
                     window.close();
                     break;
 
-                case sf::Event::KeyPressed:
+                case sf::Event::KeyPressed: {
                     switch (event.key.code) {
                         case sf::Keyboard::Escape:
                             window.close();
@@ -119,51 +123,53 @@ int main() {
                             show_correct = !show_correct;
                             break;
 
-                        case sf::Keyboard::Enter:
-                            if (col == 5) {
-                                std::string entered = "";
-                                for (auto l: words[attempt]) {
-                                    entered += l;
-                                }
-                                if (wordlist.contains(entered)) {
-                                    colorizeCells(entered, word);
-                                    ++attempt;
-                                    col = 0;
-                                    bool correct = (entered == word);
-                                    if (correct) {
-                                        std::cout << "\nYOU WIN";
-                                        window.close();
-                                    }
-                                } else {
-                                    std::cout << "\nNO SUCH WORD!\n";
-                                }
-                                if (attempt == 6) {
-                                    std::cout << "\nYOU LOST!";
+                        case sf::Keyboard::Enter: {
+                            if (col != 5) break;
+
+                            std::string entered = "";
+                            for (auto l: words[attempt]) {
+                                entered += l;
+                            }
+                            if (wordlist.contains(entered)) {
+                                colorizeCells(entered, word);
+                                ++attempt;
+                                col = 0;
+                                bool correct = (entered == word);
+                                if (correct) {
+                                    std::cout << "\nYOU WIN";
                                     window.close();
                                 }
+                            } else
+                                std::cout << "\nNO SUCH WORD!\n";
+
+                            if (attempt == 6) {
+                                std::cout << "\nYOU LOST!";
+                                window.close();
                             }
                             break;
+                        }
+                        case sf::Keyboard::BackSpace: {
+                            if (col <= 0) break;
 
-                        case sf::Keyboard::BackSpace:
-                            if (col > 0) {
-                                std::cout << "del ";
-                                words[attempt][col - 1] = "";
-                                cells[attempt][col - 1].letter.setString("");
-                                --col;
-                            }
+                            std::cout << "del ";
+                            words[attempt][col - 1] = "";
+                            cells[attempt][col - 1].letter.setString("");
+                            --col;
                             break;
-
+                        }
                         default:
                             break;
                     }
+                    break;
+                }
 
-                case sf::Event::TextEntered:
-                    if (event.text.unicode < 123 && event.text.unicode > 64 && col < 5) {
-                        std::cout << event.text.unicode << " ";
-                        getInput(event.text.unicode);
-                        ++col;
-                    }
+                case sf::Event::TextEntered: {
+                    if (!std::isalpha(event.text.unicode) || col >= COLUMN_NUMBER) break;
 
+                    std::cout << event.text.unicode << " ";
+                    getInput(event.text.unicode);
+                    ++col;
+                }
                 default:
                     break;
             }
