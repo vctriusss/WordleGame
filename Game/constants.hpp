@@ -1,8 +1,18 @@
+#pragma once
+#include <SFML/Graphics.hpp>
 #include <string>
 #include <set>
 
-using namespace std::literals;
-const std::set<std::string> wordlist = {
+const int HEIGHT = 90, WIDTH = 90;
+const int WIN_HEIGHT = 960, WIN_WIDTH = 640;
+const int LETTERS_NUMBER = 5;
+const int WORDS_NUMBER = 6;
+const sf::Color GRAY = sf::Color(128, 128, 128);
+const sf::Color GREEN = sf::Color(76, 153, 0);
+const sf::Color YELLOW = sf::Color(204, 204, 0);
+const sf::Color BLACK = sf::Color::Black;
+const sf::Color WHITE = sf::Color::White;
+const std::set<std::string> WORDLIST = {
         "aback", "abase", "abate", "abbey", "abbot", "abhor", "abide", "abled", "abode", "abort", "about", "above",
         "abuse", "abyss", "acorn", "acrid", "actor", "acute", "adage", "adapt", "adept", "admin", "admit", "adobe",
         "adopt", "adore", "adorn", "adult", "affix", "afire", "afoot", "afoul", "after", "again", "agape", "agate",
