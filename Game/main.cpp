@@ -3,7 +3,6 @@
 #include <chrono>
 #include <iostream>
 #include <random>
-#include <cctype>
 
 #define Table std::vector<std::vector<Cell>>
 
@@ -26,7 +25,7 @@ auto drawCells(Table &table, sf::RenderWindow &window) -> void {
 //    window.clear();
     for (auto &v: table) {
         for (auto &c: v) {
-            c.draw(window);
+            c.render(window);
         }
     }
 //    window.display();
@@ -59,7 +58,10 @@ auto getInput(unsigned int letter) -> void {
 auto paintCells(const std::string &entered, const std::string &correct) -> void {
     for (int j = 0; j < LETTERS_NUMBER; ++j) {
         char letter = entered[j];
-        if (correct.find(letter) == std::string::npos) continue;
+        if (correct.find(letter) == std::string::npos) {
+            cells[attempt][j].paint(GRAY, 0);
+            continue;
+        }
         bool correct_place = correct.find(letter) == entered.find(letter) ||
                              correct.find(letter) == entered.rfind(letter);
         cells[attempt][j].paint(correct_place ? GREEN : YELLOW, 0);
@@ -70,7 +72,7 @@ int main() {
     font.loadFromFile("../Fonts/Sono-Medium.ttf");
 
     auto word = createWord();
-    auto answer = createText(word, 24, BLACK, 520, 900);
+    auto answer = createText(word, 24, BLACK, WIN_WIDTH - 100, WIN_HEIGHT - 50);
 
     sf::RenderWindow window(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), "Wordle");
     window.setKeyRepeatEnabled(false);
@@ -101,8 +103,8 @@ int main() {
                             for (const auto &l: words[attempt])
                                 entered += l;
 
-                            if (pos!= LETTERS_NUMBER || !WORDLIST.contains(entered)) {
-                                std::cout << "\nNO SUCH WORD!\n";
+                            if (pos != LETTERS_NUMBER || !WORDLIST.contains(entered)) {
+                                std::cout << "NO SUCH WORD!\n";
                                 break;
                             }
 
@@ -111,13 +113,13 @@ int main() {
                             pos = 0;
                             bool correct = (entered == word);
                             if (correct) {
-                                std::cout << "\nYOU WIN";
+                                std::cout << "YOU WIN";
                                 window.close();
                             }
 
 
                             if (attempt == WORDS_NUMBER) {
-                                std::cout << "\nYOU LOST! \nRight answer was " << word;
+                                std::cout << "YOU LOST! \nRight answer was: " << word;
                                 window.close();
                             }
                             break;
@@ -125,7 +127,7 @@ int main() {
                         case sf::Keyboard::BackSpace: {
                             if (pos <= 0) break;
 
-                            std::cout << "del ";
+//                            std::cout << "del ";
                             words[attempt][pos - 1].clear();
                             cells[attempt][pos - 1].text("");
                             --pos;
@@ -140,7 +142,7 @@ int main() {
                 case sf::Event::TextEntered: {
                     auto unicode = event.text.unicode;
                     if (!(64 < unicode && unicode < 123) || pos >= LETTERS_NUMBER) break;
-                    std::cout << unicode << " ";
+//                    std::cout << unicode << " ";
                     getInput(unicode);
                     ++pos;
                 }
@@ -148,7 +150,7 @@ int main() {
                     break;
             }
         }
-        window.clear();
+        window.clear(BLACK);
         drawCells(cells, window);
         window.draw(answer);
         window.display();

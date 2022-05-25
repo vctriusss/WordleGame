@@ -1,7 +1,7 @@
 #include "Cell.hpp"
 #include "constants.hpp"
 
-void Cell::draw(sf::RenderWindow &window) {
+void Cell::render(sf::RenderWindow &window) {
     window.draw(rect);
     window.draw(letter);
 }
@@ -11,9 +11,9 @@ void Cell::paint(sf::Color color, int thickness) {
     rect.setOutlineColor(GRAY);
     rect.setOutlineThickness(thickness);
 }
-Cell::Cell() {
 
-}
+Cell::Cell() {}
+
 Cell::Cell(int x, int y, sf::Font &font) {
     rect.setSize(sf::Vector2f(WIDTH, HEIGHT));
     rect.setPosition(sf::Vector2f(x, y));

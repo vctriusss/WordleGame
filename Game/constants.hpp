@@ -7,10 +7,10 @@ const int HEIGHT = 90, WIDTH = 90;
 const int WIN_HEIGHT = 960, WIN_WIDTH = 640;
 const int LETTERS_NUMBER = 5;
 const int WORDS_NUMBER = 6;
-const sf::Color GRAY = sf::Color(128, 128, 128);
-const sf::Color GREEN = sf::Color(76, 153, 0);
-const sf::Color YELLOW = sf::Color(204, 204, 0);
-const sf::Color BLACK = sf::Color::Black;
+const sf::Color GRAY = sf::Color(58, 58, 60);
+const sf::Color GREEN = sf::Color(83, 148, 78);
+const sf::Color YELLOW = sf::Color(181, 159, 59);
+const sf::Color BLACK = sf::Color(18, 18, 19);
 const sf::Color WHITE = sf::Color::White;
 const std::set<std::string> WORDLIST = {
         "aback", "abase", "abate", "abbey", "abbot", "abhor", "abide", "abled", "abode", "abort", "about", "above",
