@@ -4,14 +4,19 @@
 #include <set>
 
 const int HEIGHT = 90, WIDTH = 90;
-const int WIN_HEIGHT = 960, WIN_WIDTH = 640;
+const int WIN_HEIGHT = 960, WIN_WIDTH = 630;
 const int LETTERS_NUMBER = 5;
 const int WORDS_NUMBER = 6;
 const sf::Color GRAY = sf::Color(58, 58, 60);
 const sf::Color GREEN = sf::Color(83, 148, 78);
 const sf::Color YELLOW = sf::Color(181, 159, 59);
 const sf::Color BLACK = sf::Color(18, 18, 19);
+const sf::Color RED = sf::Color::Red;
 const sf::Color WHITE = sf::Color::White;
+const std::string NOT_ENOUGH = "Not enough letters";
+const std::string NOT_IN_WORDLIST = "Not in wordlist";
+const std::string PRESS_TO_RESTART = "Press Tab to restart";
+const std::string RIGHT_ANSWER = "Right answer was: ";
 const std::set<std::string> WORDLIST = {
         "aback", "abase", "abate", "abbey", "abbot", "abhor", "abide", "abled", "abode", "abort", "about", "above",
         "abuse", "abyss", "acorn", "acrid", "actor", "acute", "adage", "adapt", "adept", "admin", "admit", "adobe",

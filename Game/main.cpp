@@ -7,7 +7,6 @@
 #define Table std::vector<std::vector<Cell>>
 
 int attempt = 0, pos = 0;
-bool show_correct = false;
 sf::Font font;
 std::vector<std::vector<std::string>> words(WORDS_NUMBER, std::vector<std::string>(LETTERS_NUMBER, std::string()));
 Table cells(WORDS_NUMBER, std::vector<Cell>(LETTERS_NUMBER));
@@ -22,19 +21,17 @@ auto createWord() -> std::string {
 }
 
 auto drawCells(Table &table, sf::RenderWindow &window) -> void {
-//    window.clear();
     for (auto &v: table) {
         for (auto &c: v) {
             c.render(window);
         }
     }
-//    window.display();
 }
 
-auto createText(const std::string &string, int size, sf::Color color, int x, int y) -> sf::Text {
+auto createText(const std::string &string, int size, const sf::Color &textcolor, int x, int y) -> sf::Text {
     auto text = sf::Text(string, font, size);
     text.setPosition(sf::Vector2f(x, y));
-    text.setFillColor(color);
+    text.setFillColor(textcolor);
     return text;
 }
 
@@ -49,7 +46,7 @@ auto initializeCells() -> void {
     }
 }
 
-auto getInput(unsigned int letter) -> void {
+auto getInput(const unsigned int &letter) -> void {
     char letter_char = static_cast<char> (letter);
     words[attempt][pos] = std::string(1, letter_char);
     cells[attempt][pos].text(std::string(1, toupper(letter_char)));
@@ -67,12 +64,20 @@ auto paintCells(const std::string &entered, const std::string &correct) -> void 
         cells[attempt][j].paint(correct_place ? GREEN : YELLOW, 0);
     }
 }
-
+auto reposText (sf::Text &text, const std::string &new_text, const sf::Color &new_color = WHITE) -> void {
+    int len = new_text.size();
+    sf::Vector2f position = text.getPosition();
+    text.setPosition(WIN_WIDTH / 2 - (text.getCharacterSize() / 3 - 1) * len, position.y);
+    text.setString(new_text);
+    text.setFillColor(new_color);
+}
 int main() {
     font.loadFromFile("../Fonts/Sono-Medium.ttf");
 
     auto word = createWord();
-    auto answer = createText(word, 24, BLACK, WIN_WIDTH - 100, WIN_HEIGHT - 50);
+    auto bottom_text = createText("", 40, BLACK, WIN_WIDTH / 2, WIN_HEIGHT - 250);
+    auto right_answer_text = createText("", 40, BLACK,  WIN_WIDTH / 2, WIN_HEIGHT - 175);
+    auto restart_text = createText("", 40, BLACK, WIN_WIDTH / 2, WIN_HEIGHT- 100);
 
     sf::RenderWindow window(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), "Wordle");
     window.setKeyRepeatEnabled(false);
@@ -93,41 +98,43 @@ int main() {
                             window.close();
                             break;
 
-                        case sf::Keyboard::Tab:
-                            answer.setFillColor(!show_correct ? GREEN : BLACK);
-                            show_correct = !show_correct;
+                        case sf::Keyboard::LControl:
+                            std::cout << word;
                             break;
 
                         case sf::Keyboard::Enter: {
+                            bottom_text.setFillColor(BLACK);
                             auto entered = std::string();
                             for (const auto &l: words[attempt])
                                 entered += l;
-
-                            if (pos != LETTERS_NUMBER || !WORDLIST.contains(entered)) {
-                                std::cout << "NO SUCH WORD!\n";
+                            if (pos != LETTERS_NUMBER) {
+                                reposText(bottom_text, NOT_ENOUGH);
                                 break;
                             }
-
+                            if (!WORDLIST.contains(entered)) {
+                                reposText(bottom_text, NOT_IN_WORDLIST);
+                                break;
+                            }
                             paintCells(entered, word);
                             ++attempt;
                             pos = 0;
                             bool correct = (entered == word);
                             if (correct) {
-                                std::cout << "YOU WIN";
-                                window.close();
+                                reposText(bottom_text, "YOU WIN!", GREEN);
+                                reposText(restart_text, PRESS_TO_RESTART);
                             }
 
-
-                            if (attempt == WORDS_NUMBER) {
-                                std::cout << "YOU LOST! \nRight answer was: " << word;
-                                window.close();
+                            if (!correct && attempt == WORDS_NUMBER) {
+                                reposText(bottom_text, "YOU LOST!", RED);
+                                reposText(right_answer_text, RIGHT_ANSWER + word);
+                                reposText(restart_text, PRESS_TO_RESTART);
                             }
                             break;
                         }
                         case sf::Keyboard::BackSpace: {
+                            bottom_text.setFillColor(BLACK);
                             if (pos <= 0) break;
 
-//                            std::cout << "del ";
                             words[attempt][pos - 1].clear();
                             cells[attempt][pos - 1].text("");
                             --pos;
@@ -141,8 +148,7 @@ int main() {
 
                 case sf::Event::TextEntered: {
                     auto unicode = event.text.unicode;
-                    if (!(64 < unicode && unicode < 123) || pos >= LETTERS_NUMBER) break;
-//                    std::cout << unicode << " ";
+                    if (!(65 <= unicode && unicode <= 90 || 97 <= unicode && unicode <= 122) || pos >= LETTERS_NUMBER) break;
                     getInput(unicode);
                     ++pos;
                 }
@@ -152,7 +158,16 @@ int main() {
         }
         window.clear(BLACK);
         drawCells(cells, window);
-        window.draw(answer);
+        window.draw(bottom_text);
+        window.draw(restart_text);
+        window.draw(right_answer_text);
         window.display();
     }
 }
+
+/*
+ what can be tested:
+  - entering text(creating sf::Event::TextEntered and check if input is get)
+  - painting cells (depending on entered word)
+
+*/
