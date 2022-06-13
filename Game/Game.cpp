@@ -2,9 +2,6 @@
 #include <iostream>
 #include "functions.hpp"
 
-
-//Game::Game() {}
-
 Game::Game() {
     font.loadFromFile("../Fonts/Sono-Medium.ttf");
     clear();
@@ -18,6 +15,7 @@ void Game::clear() {
     words = Table(WORDS_NUMBER, std::vector<std::string>(LETTERS_NUMBER, std::string()));
     cells = Grid(WORDS_NUMBER, std::vector<Cell>(LETTERS_NUMBER));
 }
+
 void Game::initCells() {
     for (int i = 0; i < WORDS_NUMBER; ++i) {
         for (int j = 0; j < LETTERS_NUMBER; ++j) {
@@ -38,7 +36,7 @@ void Game::initTextBoxes() {
 void Game::drawObjects(sf::RenderWindow &window) {
     for (auto &v: cells) {
         for (auto &c: v) {
-            c.render(window);
+            c.draw(window);
             window.draw(bottom_text);
             window.draw(right_answer_text);
             window.draw(restart_text);
@@ -47,8 +45,7 @@ void Game::drawObjects(sf::RenderWindow &window) {
 }
 
 void Game::showTextBox(sf::Text &textBox, std::string new_text = "", const sf::Color &new_color = WHITE) {
-    if (new_text == "")
-        new_text = textBox.getString();
+    if (new_text.empty()) new_text = textBox.getString();
     int len = new_text.size();
     sf::Vector2f position = textBox.getPosition();
     textBox.setPosition(WIN_WIDTH / 2 - (textBox.getCharacterSize() / 3 - 1) * len, position.y);
@@ -59,13 +56,13 @@ void Game::showTextBox(sf::Text &textBox, std::string new_text = "", const sf::C
 void Game::getInput(const unsigned int &letter) {
     char letter_char = static_cast<char> (letter);
     words[attempt][pos] = std::string(1, letter_char);
-    cells[attempt][pos].text(std::string(1, toupper(letter_char)));
+    cells[attempt][pos].setLetter(std::string(1, toupper(letter_char)));
 }
 
 void Game::eraseSymbol() {
     --pos;
     words[attempt][pos].clear();
-    cells[attempt][pos].text("");
+    cells[attempt][pos].setLetter();
 }
 
 void Game::paintCells(const std::string &entered, const std::string &correct) {
@@ -108,30 +105,13 @@ void Game::run(sf::RenderWindow &window) {
                             for (const auto &l: words[attempt])
                                 entered += l;
 
-                            if (pos != LETTERS_NUMBER) {
-                                showTextBox(bottom_text, NOT_ENOUGH);
-                                break;
-                            }
-                            if (!WORDLIST.contains(entered)) {
-                                showTextBox(bottom_text, NOT_IN_WORDLIST);
-                                break;
-                            }
+                            if (displayError(entered)) break;
+
                             paintCells(entered, word);
                             ++attempt;
                             pos = 0;
                             bool correct = (entered == word);
-                            if (correct) {
-                                running = false;
-                                showTextBox(bottom_text, "YOU WIN!", GREEN);
-                                showTextBox(restart_text);
-                            }
-
-                            if (!correct && attempt == WORDS_NUMBER) {
-                                running = false;
-                                showTextBox(bottom_text, "YOU LOST!", RED);
-                                showTextBox(right_answer_text);
-                                showTextBox(restart_text);
-                            }
+                            if (correct || attempt == WORDS_NUMBER) EndGameScenario(correct);
                             break;
                         }
                         case sf::Keyboard::Tab: {
@@ -154,6 +134,7 @@ void Game::run(sf::RenderWindow &window) {
                     if (!isEnglish(unicode) || pos >= LETTERS_NUMBER) break;
                     getInput(unicode);
                     ++pos;
+                    break;
                 }
                 default:
                     break;
@@ -168,4 +149,23 @@ void Game::run(sf::RenderWindow &window) {
 void Game::restart(sf::RenderWindow &window) {
     clear();
     run(window);
+}
+
+bool Game::displayError(const std::string &entered) {
+    if (pos != LETTERS_NUMBER) {
+        showTextBox(bottom_text, NOT_ENOUGH);
+        return true;
+    }
+    if (!WORDLIST.contains(entered)) {
+        showTextBox(bottom_text, NOT_IN_WORDLIST);
+        return true;
+    }
+    return false;
+}
+
+void Game::EndGameScenario(bool correct) {
+    running = false;
+    showTextBox(bottom_text, correct ? "YOU WIN!" : "YOU LOST", correct ? GREEN : RED);
+    if (!correct) showTextBox(right_answer_text);
+    showTextBox(restart_text);
 }

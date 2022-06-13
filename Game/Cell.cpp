@@ -1,17 +1,6 @@
 #include "Cell.hpp"
 #include "constants.hpp"
 
-void Cell::render(sf::RenderWindow &window) {
-    window.draw(rect);
-    window.draw(letter);
-}
-
-void Cell::paint(const sf::Color &color, int thickness) {
-    rect.setFillColor(color);
-    rect.setOutlineColor(GRAY);
-    rect.setOutlineThickness(thickness);
-}
-
 Cell::Cell() {}
 
 Cell::Cell(int x, int y, const sf::Font &font) {
@@ -25,7 +14,18 @@ Cell::Cell(int x, int y, const sf::Font &font) {
     letter.setFillColor(WHITE);
 }
 
-void Cell::text(std::string text) {
+void Cell::draw(sf::RenderWindow &window) {
+    window.draw(rect);
+    window.draw(letter);
+}
+
+void Cell::paint(const sf::Color &color, const int thickness) {
+    rect.setFillColor(color);
+    rect.setOutlineColor(GRAY);
+    rect.setOutlineThickness(thickness);
+}
+
+void Cell::setLetter(std::string text) {
     letter.setString(text);
 }
 

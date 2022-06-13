@@ -15,16 +15,6 @@ auto createTextBox(const std::string &text, const sf::Font &font, int size, cons
     return textBox;
 }
 
-auto showText (sf::Text &text, std::string new_text = "", const sf::Color &new_color = WHITE) -> void {
-    if (new_text.empty())
-        new_text = text.getString();
-    int len = new_text.size();
-    sf::Vector2f position = text.getPosition();
-    text.setPosition(WIN_WIDTH / 2 - (text.getCharacterSize() / 3 - 1) * len, position.y);
-    text.setString(new_text);
-    text.setFillColor(new_color);
-}
-
 auto isEnglish(const unsigned int &code) -> bool {
     return 65 <= code && code <= 90 || 97 <= code && code <= 122;
 }

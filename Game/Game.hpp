@@ -43,4 +43,8 @@ private:
 
     void restart(sf::RenderWindow &window);
 
+    bool displayError(const std::string &entered);
+
+    void EndGameScenario(bool correct);
+
 };

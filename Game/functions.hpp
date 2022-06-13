@@ -4,10 +4,8 @@
 #include <random>
 #include "constants.hpp"
 
-std::string createWord();
+auto createWord() -> std::string;
 
-sf::Text createTextBox(const std::string &text, const sf::Font &font, int size, const sf::Color &textcolor, int x, int y);
+auto createTextBox(const std::string &text, const sf::Font &font, int size, const sf::Color &textcolor, int x, int y) -> sf::Text;
 
-void showText (sf::Text &text, std::string new_text, const sf::Color &new_color);
-
-bool isEnglish(const unsigned int &code);
+auto isEnglish(const unsigned int &code) -> bool;

@@ -4,7 +4,6 @@
 int main() {
     sf::RenderWindow window(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), "Wordle");
     window.setKeyRepeatEnabled(false);
-
     Game game = Game();
     game.run(window);
 }
@@ -13,7 +12,7 @@ int main() {
  what can be tested:
   - entering text(creating sf::Event::TextEntered and check if input is get)
   - painting cells (depending on entered word)
-  - deleting text
+  - deleting setLetter
   - showing error messages
-
+  README.md
 */
