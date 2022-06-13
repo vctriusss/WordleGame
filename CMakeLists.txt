@@ -3,7 +3,7 @@ project(WordleGame)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(WordleGame Game/main.cpp Game/Cell.cpp)
+add_executable(WordleGame Game/main.cpp Game/Cell.cpp Game/Game.cpp Game/functions.cpp)
 set(SFML_STATIC_LIBRARIES TRUE)
 set(SFML_DIR C:/SFML-2.5.1/lib/cmake/SFML)
 find_package(SFML COMPONENTS graphics window system REQUIRED)
