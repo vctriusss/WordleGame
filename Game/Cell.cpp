@@ -6,7 +6,7 @@ void Cell::render(sf::RenderWindow &window) {
     window.draw(letter);
 }
 
-void Cell::paint(sf::Color color, int thickness) {
+void Cell::paint(const sf::Color &color, int thickness) {
     rect.setFillColor(color);
     rect.setOutlineColor(GRAY);
     rect.setOutlineThickness(thickness);
@@ -14,7 +14,7 @@ void Cell::paint(sf::Color color, int thickness) {
 
 Cell::Cell() {}
 
-Cell::Cell(int x, int y, sf::Font &font) {
+Cell::Cell(int x, int y, const sf::Font &font) {
     rect.setSize(sf::Vector2f(WIDTH, HEIGHT));
     rect.setPosition(sf::Vector2f(x, y));
     paint(BLACK);

@@ -8,11 +8,11 @@ struct Cell {
 
     void render(sf::RenderWindow &window);
 
-    void paint(sf::Color color, int thickness = 3);
+    void paint(const sf::Color &color, int thickness = 3);
 
     void text(std::string text = "");
 
     Cell();
 
-    Cell(int x, int y, sf::Font &font);
+    Cell(int x, int y, const sf::Font &font);
 };
