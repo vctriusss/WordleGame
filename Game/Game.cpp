@@ -2,6 +2,8 @@
 #include <iostream>
 #include "functions.hpp"
 
+/*
+ * default constructor of a game*/
 Game::Game() {
     font.loadFromFile("../Fonts/Sono-Medium.ttf");
     clear();
@@ -21,7 +23,7 @@ void Game::initCells() {
         for (int j = 0; j < LETTERS_NUMBER; ++j) {
             int rec_x = 70 + (WIDTH + 10) * j;
             int rec_y = 50 + (HEIGHT + 20) * i;
-            auto cell = Cell(rec_x, rec_y, font);
+            auto cell = Cell(rec_x, rec_y, font, "");
             cells[i][j] = std::move(cell);
         }
     }
@@ -57,9 +59,11 @@ void Game::getInput(const unsigned int &letter) {
     char letter_char = static_cast<char> (letter);
     words[attempt][pos] = std::string(1, letter_char);
     cells[attempt][pos].setLetter(std::string(1, toupper(letter_char)));
+    ++pos;
 }
 
 void Game::eraseSymbol() {
+    if (pos <= 0) return;
     --pos;
     words[attempt][pos].clear();
     cells[attempt][pos].setLetter();
@@ -72,8 +76,7 @@ void Game::paintCells(const std::string &entered, const std::string &correct) {
             cells[attempt][j].paint(GRAY, 0);
             continue;
         }
-        bool correct_place = correct.find(letter) == entered.find(letter) ||
-                             correct.find(letter) == entered.rfind(letter);
+        bool correct_place = correct.find(letter) == j || correct.rfind(letter) == j;
         cells[attempt][j].paint(correct_place ? GREEN : YELLOW, 0);
     }
 }
@@ -120,7 +123,7 @@ void Game::run(sf::RenderWindow &window) {
                         }
                         case sf::Keyboard::BackSpace: {
                             bottom_text.setFillColor(BLACK);
-                            if (pos > 0) eraseSymbol();
+                            eraseSymbol();
                             break;
                         }
                         default:
@@ -133,7 +136,6 @@ void Game::run(sf::RenderWindow &window) {
                     auto unicode = event.text.unicode;
                     if (!isEnglish(unicode) || pos >= LETTERS_NUMBER) break;
                     getInput(unicode);
-                    ++pos;
                     break;
                 }
                 default:

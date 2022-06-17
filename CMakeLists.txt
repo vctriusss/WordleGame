@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.21)
 project(WordleGame)
 
 set(CMAKE_CXX_STANDARD 20)
+
 add_subdirectory(external/doctest)
-add_executable(game_test Game/functions.hpp Game/test.cpp)
-target_link_libraries(game_test doctest)
+add_executable(game_test Game/functions.cpp Game/test.cpp Game/Cell.cpp Game/Game.cpp)
+target_link_libraries(game_test doctest sfml-graphics)
 add_test(NAME test COMMAND test --force-colors -d)
 add_custom_target(cloud-test COMMAND test --force-colors -d)
 

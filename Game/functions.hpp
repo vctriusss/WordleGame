@@ -3,6 +3,12 @@
 #include <chrono>
 #include <random>
 #include "constants.hpp"
+#include "Cell.hpp"
+#include <vector>
+
+#define Grid std::vector<std::vector<Cell>>
+#define Table std::vector<std::vector<std::string>>
+
 
 auto createWord() -> std::string;
 

@@ -8,18 +8,26 @@
 class Game {
 public:
 
+    Grid cells;
+    Table words;
+    int pos;
+    int attempt;
+
     Game();
 
     void run(sf::RenderWindow &window);
 
+    void paintCells(const std::string &entered, const std::string &correct);
+
+    bool displayError(const std::string &entered);
+
+    void eraseSymbol();
+
+
 private:
 
-    int pos;
-    int attempt;
     bool running;
     std::string word;
-    Grid cells;
-    Table words;
     sf::Text bottom_text;
     sf::Text right_answer_text;
     sf::Text restart_text;
@@ -37,13 +45,7 @@ private:
 
     void getInput(const unsigned int &letter);
 
-    void eraseSymbol();
-
-    void paintCells(const std::string &entered, const std::string &correct);
-
     void restart(sf::RenderWindow &window);
-
-    bool displayError(const std::string &entered);
 
     void EndGameScenario(bool correct);
 
