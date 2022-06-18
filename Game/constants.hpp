@@ -17,6 +17,9 @@ const std::string NOT_ENOUGH = "Not enough letters";
 const std::string NOT_IN_WORDLIST = "Not in wordlist";
 const std::string PRESS_TO_RESTART = "Press Tab to restart";
 const std::string RIGHT_ANSWER = "Right answer was: ";
+
+// Wordlist vector is formed on words, which were taken from an open gist repository
+// URL: https://gist.github.com/cfreshman/a03ef2cba789d8cf00c08f767e0fad7b
 const std::set<std::string> WORDLIST = {
         "aback", "abase", "abate", "abbey", "abbot", "abhor", "abide", "abled", "abode", "abort", "about", "above",
         "abuse", "abyss", "acorn", "acrid", "actor", "acute", "adage", "adapt", "adept", "admin", "admit", "adobe",
