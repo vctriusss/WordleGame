@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 /**
- * Cell is a structure, which contains of a box and a letter
+ * @struct Cell is a structure, which contains a box (square with outline frame) and a letter
  * @param rect Rectangle which forms a cell body
  * @param letter Letter in a box
  * */

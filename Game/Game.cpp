@@ -2,13 +2,14 @@
 #include <iostream>
 #include "functions.hpp"
 
-/*
+/**
  * default constructor of a game*/
 Game::Game() {
     font.loadFromFile("../Fonts/Sono-Medium.ttf");
     clear();
 }
-
+/**
+ * */
 void Game::clear() {
     running = true;
     word = createWord();

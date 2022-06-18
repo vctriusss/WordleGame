@@ -7,12 +7,3 @@ int main() {
     Game game = Game();
     game.run(window);
 }
-
-/*
- what can be tested:
-  - entering text(creating sf::Event::TextEntered and check if input is get)
-  - painting cells (depending on entered word)
-  - deleting setLetter
-  - showing error messages
-  README.md
-*/

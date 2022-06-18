@@ -5,6 +5,9 @@
 #define Grid std::vector<std::vector<Cell>>
 #define Table std::vector<std::vector<std::string>>
 
+/**
+ * @class Game is a class, which is basically a game engine and containts basic methods and parameters of a game
+ * */
 class Game {
 public:
 

@@ -33,8 +33,9 @@ auto createTextBox(const std::string &text, const sf::Font &font, int size, cons
 
 /**
  * isEnglish func checks whether the entered letter is in english alphabet or not
- * @param code Unicode of entered letter
- * @return Function returns bool if letter is English or not*/
+ * @param code Unicode (ASCII) of entered letter
+ * @return Function returns bool if letter is English or not
+ * */
 auto isEnglish(const unsigned int &code) -> bool {
     return 65 <= code && code <= 90 || 97 <= code && code <= 122;
 }
