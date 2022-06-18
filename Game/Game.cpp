@@ -3,12 +3,15 @@
 #include "functions.hpp"
 
 /**
- * default constructor of a game*/
+ * default constructor of a game
+ * */
 Game::Game() {
     font.loadFromFile("../Fonts/Sono-Medium.ttf");
     clear();
 }
+
 /**
+ * Method Game::clear() clears main parameters of the game
  * */
 void Game::clear() {
     running = true;
@@ -19,6 +22,9 @@ void Game::clear() {
     cells = Grid(WORDS_NUMBER, std::vector<Cell>(LETTERS_NUMBER));
 }
 
+/**
+ * Method Game::initCells fills a grid of cells with empty cells ready to work
+ * */
 void Game::initCells() {
     for (int i = 0; i < WORDS_NUMBER; ++i) {
         for (int j = 0; j < LETTERS_NUMBER; ++j) {
@@ -30,12 +36,19 @@ void Game::initCells() {
     }
 }
 
+/**
+ * Method Game::initTextBoxes creates 3 basic textboxes
+ * */
 void Game::initTextBoxes() {
     bottom_text = createTextBox("", font, 40, BLACK, WIN_WIDTH / 2, WIN_HEIGHT - 250);
     right_answer_text = createTextBox(RIGHT_ANSWER + word, font, 40, BLACK, WIN_WIDTH / 2, WIN_HEIGHT - 175);
     restart_text = createTextBox(PRESS_TO_RESTART, font, 40, BLACK, WIN_WIDTH / 2, WIN_HEIGHT - 100);
 }
 
+/**
+ * Method Game::drawObjects renders Cells and textboxes on a window
+ * @param window Window do draw on
+ * */
 void Game::drawObjects(sf::RenderWindow &window) {
     for (auto &v: cells) {
         for (auto &c: v) {
@@ -47,6 +60,12 @@ void Game::drawObjects(sf::RenderWindow &window) {
     }
 }
 
+/**
+ * Method Game::showTextBox makes a textbox visible and fits it in a window according to text length
+ * @param textBox Textbox to show
+ * @param new_text Unnecessary parameter if  you need to change text in a textbox
+ * @param new_color Unnecessary parameter if text in textbox needs to change color
+ * */
 void Game::showTextBox(sf::Text &textBox, std::string new_text = "", const sf::Color &new_color = WHITE) {
     if (new_text.empty()) new_text = textBox.getString();
     int len = new_text.size();
@@ -56,6 +75,10 @@ void Game::showTextBox(sf::Text &textBox, std::string new_text = "", const sf::C
     textBox.setFillColor(new_color);
 }
 
+/**
+ * Method Game::getInput puts entered letter in words table and cells
+ * @param letter Letter to insert
+ * */
 void Game::getInput(const unsigned int &letter) {
     char letter_char = static_cast<char> (letter);
     words[attempt][pos] = std::string(1, letter_char);
@@ -63,6 +86,9 @@ void Game::getInput(const unsigned int &letter) {
     ++pos;
 }
 
+/**
+ * Method Game::eraseSymbol deleter last symbol
+ * */
 void Game::eraseSymbol() {
     if (pos <= 0) return;
     --pos;
@@ -70,6 +96,11 @@ void Game::eraseSymbol() {
     cells[attempt][pos].setLetter();
 }
 
+/**
+ * Method Game::paintCells paints cells according to entered word
+ * @param entered Entered word
+ * @param correct Right answer(to compare with)
+ * */
 void Game::paintCells(const std::string &entered, const std::string &correct) {
     for (int j = 0; j < LETTERS_NUMBER; ++j) {
         char letter = entered[j];
@@ -82,6 +113,10 @@ void Game::paintCells(const std::string &entered, const std::string &correct) {
     }
 }
 
+/**
+ * Main game loop
+ * @param window window to render game on
+ * */
 void Game::run(sf::RenderWindow &window) {
     initTextBoxes();
     initCells();
@@ -149,11 +184,20 @@ void Game::run(sf::RenderWindow &window) {
     }
 }
 
+/**
+ * Method restarts game
+ * @param window Window to restart game on
+ * */
 void Game::restart(sf::RenderWindow &window) {
     clear();
     run(window);
 }
 
+/**
+ * Method displayError shows an error if it occurs
+ * @param entered Entered word
+ * @return Returns if error exists or not
+ * */
 bool Game::displayError(const std::string &entered) {
     if (pos != LETTERS_NUMBER) {
         showTextBox(bottom_text, NOT_ENOUGH);
@@ -166,6 +210,10 @@ bool Game::displayError(const std::string &entered) {
     return false;
 }
 
+/**
+ * Method EndGameScenario shows specific objects at the end of a game depending on parameters
+ * @param correct Shows whether player won a game or not
+ * */
 void Game::EndGameScenario(bool correct) {
     running = false;
     showTextBox(bottom_text, correct ? "YOU WIN!" : "YOU LOST", correct ? GREEN : RED);

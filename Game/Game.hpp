@@ -11,10 +11,10 @@
 class Game {
 public:
 
-    Grid cells;
-    Table words;
-    int pos;
-    int attempt;
+    Grid cells; //< Grid of cells (main visible objects)
+    Table words; //< Table of letters
+    int pos; //< position of a "cursor"
+    int attempt; //< number of current attempt (guess)
 
     Game();
 
@@ -29,12 +29,12 @@ public:
 
 private:
 
-    bool running;
-    std::string word;
-    sf::Text bottom_text;
-    sf::Text right_answer_text;
-    sf::Text restart_text;
-    sf::Font font;
+    bool running; //< Shows whether game is running or not (needs for restarting)
+    std::string word; //< Correct word
+    sf::Text bottom_text; //< Textbox to show errors and result of a game
+    sf::Text right_answer_text; //< Textbox to show right answer
+    sf::Text restart_text; //< Textbox to show restart text
+    sf::Font font; //< Font of a game
 
     void clear();
 
