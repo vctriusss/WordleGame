@@ -11,9 +11,9 @@ add_custom_target(cloud-test COMMAND test --force-colors -d)
 
 add_executable(WordleGame Game/main.cpp Game/Cell.cpp Game/Game.cpp Game/functions.cpp)
 set(SFML_STATIC_LIBRARIES TRUE)
-set(SFML_DIR C:/SFML-2.5.1/lib/cmake/SFML)
+#set(SFML_DIR C:/SFML-2.5.1/lib/cmake/SFML)
 find_package(SFML COMPONENTS graphics window system REQUIRED)
 
-include_directories(С:/SFML-2.5.1/include)
+#include_directories(С:/SFML-2.5.1/include)
 target_link_libraries(WordleGame sfml-system sfml-window sfml-graphics)
 
